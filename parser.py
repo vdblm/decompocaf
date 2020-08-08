@@ -1,6 +1,15 @@
 from lark import Lark
 from ast_transform import AST, CreateAST
 from grammar import grammar
+from symbol_table import SymTable
+
+OP1 = "ax"
+OP2 = "bx"
+
+TMP = "cx"
+
+sym_table = SymTable()
+# TODO walk over AST to update sym_table (vahid)
 
 
 def code_gen(ast: AST):
@@ -48,4 +57,4 @@ int main(){
 }
 """
 
-print(code_gen(parser.parse(easy_code)))
+print((parser.parse(easy_code)))
