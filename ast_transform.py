@@ -84,53 +84,28 @@ class CreateAST(Transformer):
 
     def stmt(self, args):
         # print('stmt', args)
-        return args[0]
+        return AST('stmt', args)
 
-    #
-    # def if_stmt(self, args):
-    #     # print('if_stmt', args)
-    #     retVal = 'mov tmp_0001,' + args[0] + '\n'
-    #     retVal += 'bz tmp_0001, else_0001' + '\n'
-    #     retVal += args[1] + '\n'
-    #     retVal += 'else_0001:\n'
-    #     if len(args) >= 7:
-    #         retVal += args[2] + '\n'
-    #
-    #     return retVal
-    #
-    # def while_stmt(self, args):
-    #     # print('while_stmt', args)
-    #     retVal = 'loop_start_0001:\n'
-    #     retVal += 'mov tmp_0001,' + args[0] + '\n'
-    #     retVal += 'bz tmp_0001, endwhile_0001' + '\n'
-    #     retVal += args[1] + '\n'
-    #     retVal += 'jump loop_start_0001\n'
-    #     retVal += 'endwhile_0001: nop\n'
-    #
-    #     return retVal
-    #
-    # def for_stmt(self, args):
-    #     # print('for_stmt', args)
-    #     # Assume the existence of all optional parts
-    #     retVal = args[0] + '\n'
-    #     retVal += 'loop_start_0001:\n'
-    #     retVal += 'mov tmp_0001,' + args[1] + '\n'
-    #     retVal += 'bz tmp_0001, endfor_0001' + '\n'
-    #     retVal += args[2] + '\n'
-    #     retVal += args[3] + '\n'
-    #     retVal += 'jump loop_start_0001\n'
-    #     retVal += 'endfor_0001: nop\n'
-    #
-    #     return retVal
-    #
+    
+    def if_stmt(self, args):
+        children = [args[2], args[4]]
+        if args[6] is not None:
+            children.append(args[6])
+        return AST('if_stmt', children)
+    
+    def while_stmt(self, args):
+        return AST('while_stmt', [args[0], args[1]])
+    
+    def for_stmt(self, args):
+        return AST('for_stmt', [args[2], args[4], args[6], args[8]])
+    
     # def return_stmt(self, args):
     #     # print('return_stmt', args)
     #     # "return" [expr] ";"
     #     return ';;;;;;; WE ARE FUCKED BROs'
-    #
-    # def break_stmt(self, args):
-    #     # print('break_stmt', args)
-    #     return 'jump endfor_0001' # maybe while
+    
+    def break_stmt(self, args):
+        return AST("break", args)
 
     def print_stmt(self, args):
         # print('print_stmt', args)
