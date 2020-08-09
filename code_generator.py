@@ -163,7 +163,6 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "move %s, %s \n" % (OP2, OP1)
             body += "mul %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
@@ -187,7 +186,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "mul.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
+            body += "div.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mod_expr":
@@ -233,7 +232,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.lt.d %s, %s\n" % (FOP2, FOP1)
+            body += "c.gt.d %s, %s\n" % (FOP2, FOP1)
             body += "bc1t code" + str(linenum) + "\n"
             body += "addu %s ,$0,$0\n" % OP1
             body += "b    end" + linenum + "\n"
@@ -275,7 +274,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.le.d %s, %s\n" % (FOP2, FOP1)
+            body += "c.ge.d %s, %s\n" % (FOP2, FOP1)
             linenum += 1
             body += "bc1t code" + str(linenum) + "\n"
             body += "addu %s ,$0,$0\n" % OP1
@@ -360,12 +359,12 @@ def code_gen(ast: AST, prevLoopEnd=None):
 
     if ast.name == "for_stmt":
         for_start, for_end = sym_table.get_label('for')
-        body = code_gen(ast.children[0], for_end) + '\n'
+        body = (code_gen(ast.children[0], for_end) if (ast.children[0] is not None) else '') + '\n'
         body = '%s:\n' % (for_start)
         body += code_gen(ast.children[1], for_end) + '\n'
         body += 'beq %s, $0, %s\n' % (OP1, for_end)
         body += 'sll $0, $0, 0\n'
-        body += code_gen(ast.children[2], for_end) + '\n'
+        body += (code_gen(ast.children[2], for_end) if (ast.children[2] is not None) else '') + '\n'
         body += 'j %s\n' % (for_start)
         body += '%s: sll $0, $0, 0\n' % (for_end)
         return body
