@@ -17,8 +17,11 @@ FOP3 = "$f3"
 
 SW = "$t0"
 LW = "$t0"
+
+SW_DOUB = "$f5"
 SYS_CODE = "$v0"
 SYS_ARG = "$a0"
+SYS_DOUB_ARG = "$f12"
 PRINT_INT = 1
 PRINT_DOUBLE = 2
 PRINT_STRING = 4
@@ -58,9 +61,9 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = "lw {}, {}\n".format(LW, ast.children[0])
             body += "move {}, {}\n".format(OP1, LW)
             return body
-        elif ast.type=="double":
-            body = "lw {}, {}\n".format(LW, ast.children[0])
-            body += "mov.d {}, {}\n".format(FOP1, LW)
+        elif ast.type == "double":
+            body = "l.s {}, {}\n".format(SW_DOUB, ast.children[0])
+            body += "mov.d {}, {}\n".format(FOP1, SW_DOUB)
             return body
 
             pass
@@ -73,8 +76,8 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move {}, {}\n".format(SW, OP1)
             body += "sw {}, {}\n".format(SW, lvalue.children[0])
         elif lvalue.type == "double":
-            body += "mov.d {}, {}\n".format(SW, FOP1)
-            body += "sw {}, {}\n".format(FOP2, lvalue.children[0])
+            body += "mov.d {}, {}\n".format(SW_DOUB, FOP1)
+            body += "s.s {}, {}\n".format(SW_DOUB, lvalue.children[0])
             pass
         elif lvalue.type == "string":
             # todo
@@ -96,8 +99,11 @@ def code_gen(ast: AST, prevLoopEnd=None):
                 body += "move {}, {}\n".format(SYS_ARG, OP1)
                 body += "li {}, {}\n".format(SYS_CODE, PRINT_INT)
                 body += "syscall    # print!\n"
-            else:
-                # todo
+            elif child.type == "double":
+                body += code_gen(child)
+                body += "mov.d {}, {}\n".format(SYS_DOUB_ARG, FOP1)
+                body += "li {}, {}\n".format(SYS_CODE, PRINT_DOUBLE)
+                body += "syscall    # print!\n"
                 pass
         # add newline
         body += "li {}, {}\n".format(SYS_CODE, PRINT_STRING)
@@ -120,8 +126,6 @@ def code_gen(ast: AST, prevLoopEnd=None):
             return "li {}, {}\n".format(OP1, num)
         elif ast.type == "double":
             return "li.d {}, {}\n".format(FOP1, ast.children[0].children[0])
-
-            pass
 
     if ast.name == "add_expr":
         if child1.type == "int":
@@ -160,7 +164,6 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "move %s, %s \n" % (OP2, OP1)
             body += "mul %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
@@ -184,7 +187,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "mul.d %s, %s, %s\n" % (FOP1, FOP2, FOP3)
+            body += "div.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mod_expr":
@@ -230,7 +233,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.lt.d %s, %s\n" % (FOP2, FOP1)
+            body += "c.gt.d %s, %s\n" % (FOP2, FOP1)
             body += "bc1t code" + str(linenum) + "\n"
             body += "addu %s ,$0,$0\n" % OP1
             body += "b    end" + linenum + "\n"
@@ -272,7 +275,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.le.d %s, %s\n" % (FOP2, FOP1)
+            body += "c.ge.d %s, %s\n" % (FOP2, FOP1)
             linenum += 1
             body += "bc1t code" + str(linenum) + "\n"
             body += "addu %s ,$0,$0\n" % OP1

@@ -1,11 +1,10 @@
 .data # Data section
-a_1: .word 0
-b_1: .word 0
-i_1: .word 0
+i_1: .float 0.0
 
 newLINE: .asciiz "\n" 
 .text
 main:
+<<<<<<< HEAD
 li $s0, 0
 move $t0, $s0
 sw $t0, b_1
@@ -44,6 +43,16 @@ lw $t0, b_1
 move $s0, $t0
 move $a0, $s0
 li $v0, 1
+=======
+li.d $f0, 5.5
+mov.d $f5, $f0
+s.s $f5, i_1
+
+l.s $f5, i_1
+mov.d $f0, $f5
+mov.d $f12, $f0
+li $v0, 2
+>>>>>>> f9a5243c06a19211c27590e0fef23d8198c62fd4
 syscall    # print!
 li $v0, 4
 la $a0, newLINE

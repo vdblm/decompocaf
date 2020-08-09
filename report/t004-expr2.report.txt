@@ -1,1 +1,1 @@
-different line count in these files! : file out/t004-expr2.out : #0 , file tests/t004-expr2.out : #1 
+difference in line #1: file: out/t004-expr2.out -----> content: 756 <> file: tests/t004-expr2.out -----> content: -601 

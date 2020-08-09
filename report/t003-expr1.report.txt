@@ -1,0 +1,5 @@
+difference in line #1: file: out/t003-expr1.out -----> content: 0 <> file: tests/t003-expr1.out -----> content: 105 
+difference in line #2: file: out/t003-expr1.out -----> content: 0 <> file: tests/t003-expr1.out -----> content: 2 
+difference in line #3: file: out/t003-expr1.out -----> content: 0 <> file: tests/t003-expr1.out -----> content: 428 
+difference in line #4: file: out/t003-expr1.out -----> content: 0 <> file: tests/t003-expr1.out -----> content: -550 
+difference in line #5: file: out/t003-expr1.out -----> content: 0 <> file: tests/t003-expr1.out -----> content: 218 
