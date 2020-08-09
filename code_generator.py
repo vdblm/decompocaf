@@ -17,8 +17,11 @@ FOP3 = "$f3"
 
 SW = "$t0"
 LW = "$t0"
+
+SW_DOUB = "$f5"
 SYS_CODE = "$v0"
 SYS_ARG = "$a0"
+SYS_DOUB_ARG = "$f12"
 PRINT_INT = 1
 PRINT_DOUBLE = 2
 PRINT_STRING = 4
@@ -58,9 +61,9 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = "lw {}, {}\n".format(LW, ast.children[0])
             body += "move {}, {}\n".format(OP1, LW)
             return body
-        elif ast.type=="double":
-            body = "lw {}, {}\n".format(LW, ast.children[0])
-            body += "mov.d {}, {}\n".format(FOP1, LW)
+        elif ast.type == "double":
+            body = "l.s {}, {}\n".format(SW_DOUB, ast.children[0])
+            body += "mov.d {}, {}\n".format(FOP1, SW_DOUB)
             return body
 
             pass
@@ -73,8 +76,8 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move {}, {}\n".format(SW, OP1)
             body += "sw {}, {}\n".format(SW, lvalue.children[0])
         elif lvalue.type == "double":
-            body += "mov.d {}, {}\n".format(SW, FOP1)
-            body += "sw {}, {}\n".format(FOP2, lvalue.children[0])
+            body += "mov.d {}, {}\n".format(SW_DOUB, FOP1)
+            body += "s.s {}, {}\n".format(SW_DOUB, lvalue.children[0])
             pass
         elif lvalue.type == "string":
             # todo
@@ -95,8 +98,11 @@ def code_gen(ast: AST, prevLoopEnd=None):
                 body += "move {}, {}\n".format(SYS_ARG, OP1)
                 body += "li {}, {}\n".format(SYS_CODE, PRINT_INT)
                 body += "syscall    # print!\n"
-            else:
-                # todo
+            elif child.type == "double":
+                body += code_gen(child)
+                body += "mov.d {}, {}\n".format(SYS_DOUB_ARG, FOP1)
+                body += "li {}, {}\n".format(SYS_CODE, PRINT_DOUBLE)
+                body += "syscall    # print!\n"
                 pass
         # add newline
         body += "li {}, {}\n".format(SYS_CODE, PRINT_STRING)
@@ -114,16 +120,11 @@ def code_gen(ast: AST, prevLoopEnd=None):
         # todo
         if ast.type == "int":
             return "li {}, {}\n".format(OP1, ast.children[0].children[0])
-<<<<<<< Updated upstream
         elif ast.type == "bool":
             num = 1 if ast.children[0].children[0] == "true" else 0
             return "li {}, {}\n".format(OP1, num)
-=======
         elif ast.type == "double":
             return "li.d {}, {}\n".format(FOP1, ast.children[0].children[0])
-
-            pass
->>>>>>> Stashed changes
 
     if ast.name == "add_expr":
         if child1.type == "int":

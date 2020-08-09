@@ -2,8 +2,7 @@
 a_1: .word 0
 b_1: .word 0
 
-newLINE: .asciiz "
-" 
+newLINE: .asciiz "\n" 
 .text
 main:
 li $v0, 5
