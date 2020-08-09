@@ -24,7 +24,7 @@ NEW_LINE = "newLINE"
 
 
 def code_gen(ast: AST, prevLoopEnd=None):
-    global child1
+    global child1, linenum
     if len(ast.children) > 0:
         child1 = ast.children[0]
     if ast.name == "program":
@@ -103,168 +103,219 @@ def code_gen(ast: AST, prevLoopEnd=None):
     if ast.name == "add_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "add %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "mov.d %s, %s \n" % (FOP3, FOP2)
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP3, FOP1)
             body += "add.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
             return body
     if ast.name == "sub_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "sub %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "mov.d %s, %s \n" % (FOP3, FOP2)
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP3, FOP1)
             body += "sub.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mult_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
-            body += "muhi %s\n" % (OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "mul %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "mov.d %s, %s \n" % (FOP3, FOP2)
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP3, FOP1)
             body += "mul.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "div_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
+            body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP1)
-            body += "div %s, %s \n" % (OP1, OP2)
-            body += "mflo %s\n" % (OP1)
+            body += "div %s, %s \n" % (OP2, OP1)
+            body += "mflo %s\n" % OP1
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "mov.d %s, %s \n" % (FOP3, FOP2)
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP3, FOP1)
             body += "mul.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mod_expr":
         if True:
             body = code_gen(ast.children[0]) + '\n'
+            body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP1)
-            body += "div %s, %s \n" % (OP1, OP2)
-            body += "mfhi %s\n" % (OP1)
+            body += "div %s, %s \n" % (OP2, OP1)
+            body += "mfhi %s\n" % OP1
             return body
     if ast.name == "lt_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "slt %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
+            linenum += 1
             body = code_gen(ast.children[0]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.lt.d %s, %s\n" % (FOP1, FOP2)
+            body += "c.lt.d %s, %s\n" % (FOP2, FOP1)
+            body += "bc1t code" + str(linenum) + "\n"
+            body += "addu %s,$0,$0\n" % OP1
+            body += "b    end" + linenum + "\n"
+            body += "code" + linenum + ":\n"
+            body += "addu %s,$0,$1\n" % OP1
+            body += "end" + linenum + ":\n"
             return body
 
     if ast.name == "gt_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
-            body += "slt %s, %s %s\n" % (OP1, TMP, OP2)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
+            body += "slt %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
+            linenum += 1
             body = code_gen(ast.children[0]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "c.lt.d %s, %s\n" % (FOP2, FOP1)
+            body += "bc1t code" + str(linenum) + "\n"
+            body += "addu %s ,$0,$0\n" % OP1
+            body += "b    end" + linenum + "\n"
+            body += "code" + linenum + ":\n"
+            body += "addu %s,$0,$1\n" % OP1
+            body += "end" + linenum + ":\n"
+
             return body
     if ast.name == "le_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "sle %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
+            linenum += 1
             body = code_gen(ast.children[0]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.le.d %s, %s\n" % (FOP1, FOP2)
+            body += "c.le.d %s, %s\n" % (FOP2, FOP1)
+            body += "bc1t code" + str(linenum) + "\n"
+            body += "addu %s ,$0,$0\n" % OP1
+            body += "b    end" + linenum + "\n"
+            body += "code" + linenum + ":\n"
+            body += "addu %s,$0,$1\n" % OP1
+            body += "end" + linenum + ":\n"
             return body
     if ast.name == "ge_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
-            body += "sle %s, %s %s\n" % (OP1, TMP, OP2)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
+            body += "sge %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "c.le.d %s, %s\n" % (FOP2, FOP1)
+            linenum += 1
+            body += "bc1t code" + str(linenum) + "\n"
+            body += "addu %s ,$0,$0\n" % OP1
+            body += "b    end" + linenum + "\n"
+            body += "code" + linenum + ":\n"
+            body += "addu %s,$0,$1\n" % OP1
+            body += "end" + linenum + ":\n"
             return body
     if ast.name == "eq_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "seq %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.eq.d %s, %s\n" % (FOP1, FOP2)
+            body += "c.eq.d %s, %s\n" % (FOP2, FOP1)
+            linenum += 1
+            body += "bc1t code" + str(linenum) + "\n"
+            body += "addu %s ,$0,$0\n" % OP1
+            body += "b    end" + linenum + "\n"
+            body += "code" + linenum + ":\n"
+            body += "addu %s,$0,$1\n" % OP1
+            body += "end" + linenum + ":\n"
+
             return body
     if ast.name == "ne_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "sne %s, %s %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
+            body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.eq.d %s, %s\n" % (FOP1, FOP2)
+            body += "c.nq.d %s, %s\n" % (FOP1, FOP2)
+            linenum += 1
+            body += "bc1t code" + str(linenum) + "\n"
+            body += "addu %s ,$0,$1\n" % OP1
+            body += "b    end" + linenum + "\n"
+            body += "code" + linenum + ":\n"
+            body += "addu %s,$0,$0\n" % OP1
+            body += "end" + linenum + ":\n"
             # float instruction does not have not equal so swap the answer
             return body
     if ast.name == "and_expr":
         if True:
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "and %s, %s %s\n" % (OP1, OP2, TMP)
             return body
     if ast.name == "or_expr":
         if True:
             body = code_gen(ast.children[0]) + '\n'
-            body += code_gen(ast.children[1]) + '\n'
-            body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
             body += "or %s, %s %s\n" % (OP1, OP2, TMP)
             return body
 
