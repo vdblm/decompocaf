@@ -199,4 +199,4 @@ int main(){
 ast = parser.parse(easy_code)
 sym_table = SymTable(ast)
 sym_table.symbolize()
-print(sym_table.ast)
+print(code_gen(ast))

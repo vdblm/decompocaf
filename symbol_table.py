@@ -8,6 +8,9 @@ class SymTable:
         self.var_types = dict()
         self.last_num = 0
         self.data_code = ".data # Data section\n"
+        self.while_num = 0
+        self.for_num = 0
+        self.if_num = 0
 
     def symbolize(self):
         self.__symbolize(self.ast)
@@ -105,14 +108,27 @@ class SymTable:
             raise Exception("Not defined type")
         self.data_code += code
 
-    def fetch(self, var_name):
-        # returns address, type (int, double, string, ...)
-        return var_name, self.var_types[var_name]
-
     def get_label(self, command):
-        # command \in {"while", "if", "for", ...}
-        # returns labels like "WHILE00", ...
-        pass
+        if command == "while":
+            label1 = "WHILLE_START_" + str(self.while_num)
+            label2 = "WHILLE_END_" + str(self.while_num)
+            self.while_num += 1
+            assert self.var_types.get(label1) is None
+            assert self.var_types.get(label2) is None
+            return label1, label2
+
+        if command == "for":
+            label1 = "FOOR_START_" + str(self.for_num)
+            label2 = "FOOR_END_" + str(self.for_num)
+            self.for_num += 1
+            assert self.var_types.get(label1) is None
+            assert self.var_types.get(label2) is None
+            return label1, label2
+        if command == "if":
+            label = "IIF_" + str(self.if_num)
+            self.if_num += 1
+            assert self.var_types.get(label) is None
+            return label
 
 
 class Scope:
