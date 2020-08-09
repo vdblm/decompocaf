@@ -1,4 +1,5 @@
 from lark import Lark
+
 from ast_transform import AST, CreateAST
 from grammar import grammar
 from symbol_table import SymTable
@@ -45,6 +46,109 @@ def code_gen(ast: AST, prevLoopEnd=None):
 
     if ast.name == "print_stmt":
         pass
+    if ast.name == "add_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "add %s, %s %s\n" % (OP1, OP2, TMP)
+            return body
+    if ast.name == "sub_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "sub %s, %s %s\n" % (OP1, OP2, TMP)
+            return body
+    if ast.name == "mult_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "muhi %s\n" % (OP1)
+            return body
+    if ast.name == "div_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
+            body += "div %s, %s \n" % (OP1, OP2)
+            body += "mflo %s\n" % (OP1)
+            return body
+    if ast.name == "mod_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP1)
+            body += "div %s, %s \n" % (OP1, OP2)
+            body += "mfhi %s\n" % (OP1)
+            return body
+    if ast.name == "lt_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "slt %s, %s %s\n" % (OP1, OP2, TMP)
+            return body
+    if ast.name == "gt_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "slt %s, %s %s\n" % (OP1, TMP, OP2)
+            return body
+    if ast.name == "le_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "sle %s, %s %s\n" % (OP1, OP2, TMP)
+    if ast.name == "ge_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "sle %s, %s %s\n" % (OP1, TMP, OP2)
+            return body
+    if ast.name == "eq_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "seq %s, %s %s\n" % (OP1, OP2, TMP)
+            return body
+    if ast.name == "ne_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "sne %s, %s %s\n" % (OP1, OP2, TMP)
+            return body
+    if ast.name == "and_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "and %s, %s %s\n" % (OP1, OP2, TMP)
+            return body
+    if ast.name == "or_expr":
+        if True:
+            body = code_gen(ast.children[0]) + '\n'
+            body += code_gen(ast.children[1]) + '\n'
+            body += "move %s, %s \n" % (TMP, OP2)
+            body += "move %s, %s \n" % (OP2, OP1)
+            body += "or %s, %s %s\n" % (OP1, OP2, TMP)
+            return body
 
     if ast.name == "while_stmt":
         while_start, while_end = sym_table.get_label('while')
