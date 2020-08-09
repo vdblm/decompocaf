@@ -58,8 +58,11 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = "lw {}, {}\n".format(LW, ast.children[0])
             body += "move {}, {}\n".format(OP1, LW)
             return body
-        else:
-            # todo
+        elif ast.type=="double":
+            body = "lw {}, {}\n".format(LW, ast.children[0])
+            body += "mov.d {}, {}\n".format(FOP1, LW)
+            return body
+
             pass
 
     if ast.name == "assign_expr":
@@ -70,7 +73,8 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move {}, {}\n".format(SW, OP1)
             body += "sw {}, {}\n".format(SW, lvalue.children[0])
         elif lvalue.type == "double":
-            # todo
+            body += "mov.d {}, {}\n".format(SW, FOP1)
+            body += "sw {}, {}\n".format(FOP2, lvalue.children[0])
             pass
         elif lvalue.type == "string":
             # todo
@@ -110,9 +114,16 @@ def code_gen(ast: AST, prevLoopEnd=None):
         # todo
         if ast.type == "int":
             return "li {}, {}\n".format(OP1, ast.children[0].children[0])
+<<<<<<< Updated upstream
         elif ast.type == "bool":
             num = 1 if ast.children[0].children[0] == "true" else 0
             return "li {}, {}\n".format(OP1, num)
+=======
+        elif ast.type == "double":
+            return "li.d {}, {}\n".format(FOP1, ast.children[0].children[0])
+
+            pass
+>>>>>>> Stashed changes
 
     if ast.name == "add_expr":
         if child1.type == "int":
