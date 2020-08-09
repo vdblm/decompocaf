@@ -105,7 +105,7 @@ class SymTable:
         elif var_type == "bool":
             code += ".byte 0\n"
         elif var_type == "string":
-            code += ".space " + str(MAX_STR) + " # allocate 200 byte for a string"
+            code += ".space " + str(MAX_STR) + " # allocate 200 byte for a string\n"
         else:
             raise Exception("Not defined type")
         self.data_code += code

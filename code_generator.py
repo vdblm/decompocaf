@@ -2,7 +2,7 @@ from lark import Lark
 
 from ast_transform import AST, CreateAST
 from grammar import grammar
-from symbol_table import SymTable
+from symbol_table import SymTable, MAX_STR
 
 OP1 = "$s0"
 OP2 = "$s1"
@@ -13,6 +13,8 @@ FOP1 = "$f0"
 FOP2 = "$f1"
 FOP3 = "$f3"
 
+# STR_ADDR = "t7"
+
 SW = "$t0"
 LW = "$t0"
 SYS_CODE = "$v0"
@@ -21,6 +23,12 @@ PRINT_INT = 1
 PRINT_DOUBLE = 2
 PRINT_STRING = 4
 NEW_LINE = "newLINE"
+
+# TMP_STR = "tmpppSTR"
+
+READ_INT = 5
+READ_STR = 8
+READ_RES = "$v0"
 
 
 def code_gen(ast: AST, prevLoopEnd=None):
@@ -31,14 +39,14 @@ def code_gen(ast: AST, prevLoopEnd=None):
         return "\n".join([code_gen(child, prevLoopEnd) for child in ast.children])
 
     if ast.name == "variable_decl":
-        pass
+        return ""
     if ast.name == "function_decl":
         if ast.children[1] == "main":
             body = code_gen(ast.children[3], prevLoopEnd)
             return "main:\n" + body
         else:
-            # TODO
-            pass
+            raise Exception("No function please:(")
+
     if ast.name == "stmt_block":
         # iterate till variable declaration is finished
         res = filter(lambda x: x.name != "variable_decl", ast.children)
@@ -78,7 +86,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
     if ast.name == "print_stmt":
         body = ""
         for child in ast.children:
-            if child.type == "int":
+            if child.type == "int" or child.type == "bool":
                 body += code_gen(child)
                 body += "move {}, {}\n".format(SYS_ARG, OP1)
                 body += "li {}, {}\n".format(SYS_CODE, PRINT_INT)
@@ -92,17 +100,24 @@ def code_gen(ast: AST, prevLoopEnd=None):
         body += "syscall #print new line\n"
         return body
 
+    if ast.name == "read_integer":
+        body = "li {}, {}\n".format(SYS_CODE, READ_INT)
+        body += "syscall # read integer\n"
+        body += "move {}, {}\n".format(OP1, READ_RES)
+        return body
+
     if ast.name == "constant":
         # todo
         if ast.type == "int":
             return "li {}, {}\n".format(OP1, ast.children[0].children[0])
-        else:
-            # todo handle double, string, ...
-            pass
+        elif ast.type == "bool":
+            num = 1 if ast.children[0].children[0] == "true" else 0
+            return "li {}, {}\n".format(OP1, num)
 
     if ast.name == "add_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
+
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP2)
             body += "move %s, %s \n" % (OP2, OP1)
@@ -110,6 +125,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
+
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP2)
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
@@ -312,16 +328,22 @@ def final_code(code):
     global sym_table
     sym_table = SymTable(ast)
     sym_table.symbolize()
+    print(sym_table.data_code)
     return sym_table.data_code + "\n" + NEW_LINE + ": .asciiz \"\n\" \n" + ".text\n" + code_gen(ast)
 
 
 easy_code = """
-int main(){
-    int a;
+int a;
+int main() {
+    int b;
+    int i;
+    
     a = 2;
-    Print(a);
-
+    if (a <= 2) {
+        Print(1, 2, 3);
+        Print(4, 5, 6);
+    }
 }
 """
 
-# print(final_code(easy_code))
+print(final_code(easy_code))

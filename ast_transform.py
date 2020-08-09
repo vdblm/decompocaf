@@ -94,7 +94,7 @@ class CreateAST(Transformer):
 
     def if_stmt(self, args):
         children = [args[2], args[4]]
-        if args[6] is not None:
+        if len(args) == 7:
             children.append(args[6])
         return AST('if_stmt', children)
 
@@ -124,6 +124,10 @@ class CreateAST(Transformer):
             # | constant | lvalue | "this" | call
             if str(args[0]) == "this":
                 return AST("this", [])
+            elif str(args[0]) in ["true", "false"]:
+                ast = AST("bool_const", [args[0]])
+                ast.type = "bool"
+                return AST("constant", [ast])
             else:
                 return args[0]
         if len(args) == 2:
@@ -225,11 +229,6 @@ class CreateAST(Transformer):
     def double_cons(self, args):
         ast = AST("double_const", [args[0]])
         ast.type = "double"
-        return ast
-
-    def bool_cons(self, args):
-        ast = AST("bool_const", [args[0]])
-        ast.type = "bool"
         return ast
 
     def str_cons(self, args):

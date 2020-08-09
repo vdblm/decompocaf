@@ -45,7 +45,7 @@ break_stmt : "break" ";"
 
 print_stmt : "Print" "(" expr ("," expr)* ")" ";"
 
-!expr : lvalue "=" expr | constant | lvalue | "this" | call | "(" expr ")"
+!expr : lvalue "=" expr | constant | "true" | "false" | lvalue | "this" | call | "(" expr ")"
      | expr "+" expr | expr "-" expr | expr "*" expr | expr "/" expr 
      | expr "%" expr | "-" expr | expr "<" expr | expr "<=" expr | expr ">" expr
      | expr ">=" expr | expr "!=" expr | expr "==" expr | expr "&&" expr
@@ -58,13 +58,11 @@ print_stmt : "Print" "(" expr ("," expr)* ")" ";"
 
 actuals : expr ("," expr)*
         |
-!constant : int_cons | double_cons | bool_cons | str_cons | null
+!constant : int_cons | double_cons | str_cons | null
 
 int_cons : INT_CONST
 
 double_cons : DOUBLE_CONST
-
-bool_cons : BOOL_CONST
 
 str_cons : STR_CONST
 
@@ -72,7 +70,6 @@ null : "null"
 IDENT : /([a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_){0,30}/
 INT_CONST : /(((0[xX])([0-9]|[a-f]|[A-F])+)|[0-9]+)/
 DOUBLE_CONST : /(([0-9]+\.([0-9]*)[eE][-+]?([0-9]+))|([0-9]+\.([0-9]*)))/
-BOOL_CONST : /true|false/
 STR_CONST : /"[^\n"]*"/
 // ignore white-spaces
 %import common.WS
