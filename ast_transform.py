@@ -125,6 +125,33 @@ class CreateAST(Transformer):
         if args[1] == '=':
             return AST("assign_exp", [args[0], args[2]])
             # return 'mov ' + args[0] + ', ' + args[1]
+        if len(args == 3):
+            if args[1] == '+':
+                return AST("add_expr", [args[0], args[2]])
+            if args[1] == '-':
+                return AST("sub_expr", [args[0], args[2]])
+            if args[1] == '*':
+                return AST("mult_expr", [args[0], args[2]])
+            if args[1] == '/':
+                return AST("div_expr", [args[0], args[2]])
+            if args[1] == '%':
+                return AST("mod_expr", [args[0], args[2]])
+            if args[1] == '<':
+                return AST("lt_expr", [args[0], args[2]])
+            if args[1] == '>':
+                return AST("gt_expr", [args[0], args[2]])
+            if args[1] == '<=':
+                return AST("le_expr", [args[0], args[2]])
+            if args[1] == '>=':
+                return AST("ge_expr", [args[0], args[2]])
+            if args[1] == '==':
+                return AST("eq_expr", [args[0], args[2]])
+            if args[1] == '!=':
+                return AST("ne_expr", [args[0], args[2]])
+            if args[1] == '&&':
+                return AST("and_expr", [args[0], args[2]])
+            if args[1] == '||':
+                return AST("or_expr", [args[0], args[2]])
 
         return args[0]
 
@@ -224,33 +251,7 @@ class CreateAST(Transformer):
         # return 'mov ax, ' + '___'.join(args)
         if len(args) == 1:
             return AST("lvalue", [args[0]])
-        if len(args == 3):
-            if args[1] == '+':
-                return AST("add_expr", [args[0], args[2]])
-            if args[1] == '-':
-                return AST("sub_expr", [args[0], args[2]])
-            if args[1] == '*':
-                return AST("mult_expr", [args[0], args[2]])
-            if args[1] == '/':
-                return AST("div_expr", [args[0], args[2]])
-            if args[1] == '%':
-                return AST("mod_expr", [args[0], args[2]])
-            if args[1] == '<':
-                return AST("lt_expr", [args[0], args[2]])
-            if args[1] == '>':
-                return AST("gt_expr", [args[0], args[2]])
-            if args[1] == '<=':
-                return AST("le_expr", [args[0], args[2]])
-            if args[1] == '>=':
-                return AST("ge_expr", [args[0], args[2]])
-            if args[1] == '==':
-                return AST("eq_expr", [args[0], args[2]])
-            if args[1] == '!=':
-                return AST("ne_expr", [args[0], args[2]])
-            if args[1] == '&&':
-                return AST("and_expr", [args[0], args[2]])
-            if args[1] == '||':
-                return AST("or_expr", [args[0], args[2]])
+
         else:
             # TODO fix this
             raise Exception
