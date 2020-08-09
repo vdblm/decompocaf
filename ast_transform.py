@@ -43,19 +43,21 @@ class CreateAST(Transformer):
 
     def type(self, args):
         if len(args) == 1:
-            return AST("type", [args[0]])
+            return str(args[0])
         else:
-            # return args[0] + '[]'
-            return args
+            # todo arrays
+            raise Exception("No array type")
 
     def function_decl(self, args):
         # print("function_decl", args)
-        return AST("function_decl", args)
+        return AST("function_decl", [str(args[0]), args[1], args[3], args[5]])
 
-    #
-    # def formals(self, args):
-    #     # print('formals', args)
-    #     return '\n'.join([arg for arg in args if arg != ','])
+    def formals(self, args):
+        # print('formals', args)
+        if len(args) == 0:
+            return None
+        else:
+            return AST("formals", args)
 
     #
     # def class_decl(self, args):
@@ -86,30 +88,31 @@ class CreateAST(Transformer):
         # print('stmt', args)
         return AST('stmt', args)
 
-    
     def if_stmt(self, args):
         children = [args[2], args[4]]
         if args[6] is not None:
             children.append(args[6])
         return AST('if_stmt', children)
-    
+
     def while_stmt(self, args):
         return AST('while_stmt', [args[0], args[1]])
-    
+
     def for_stmt(self, args):
+        # TODO handle  "for" "(" [expr] ";" expr ";" [expr] ")" stmt
         return AST('for_stmt', [args[2], args[4], args[6], args[8]])
-    
-    # def return_stmt(self, args):
-    #     # print('return_stmt', args)
-    #     # "return" [expr] ";"
-    #     return ';;;;;;; WE ARE FUCKED BROs'
-    
+
+    def return_stmt(self, args):
+        # print('return_stmt', args)
+        children = []
+        if len(args) == 1:
+            children.append(args[0])
+        return AST("return_stmt", children)
+
     def break_stmt(self, args):
-        return AST("break", args)
+        return AST("break", [])
 
     def print_stmt(self, args):
         # print('print_stmt', args)
-        # "Print" "(" expr ("," expr)* ")" ";"
         return AST("print_stmt", args)
 
     def expr(self, args):
@@ -252,17 +255,18 @@ class CreateAST(Transformer):
             # TODO fix this
             raise Exception
 
-    # def call(self, args):
+    def call(self, args):
+        # print('call', args)
+        # retVal = '\n'.join(list(map(lambda x: 'mov ax,+x', args[1:]))) + '\n'
+        # retVal += 'jump ' + args[0]
+        if str(args[1]) == "(":
+            return AST("call", [args[0], args[2]])
+        else:
+            raise Exception("Not defined class func call")
 
-    #     # print('call', args)
-    #     retVal = '\n'.join(list(map(lambda x: 'mov ax,+x', args[1:]))) + '\n'
-    #     retVal += 'jump ' + args[0]
-    #
-    #     return retVal;
-    #
-    # def actuals(self, args):
-    #     # print('actuals', args)
-    #     return args[0]
+    def actuals(self, args):
+        # print('actuals', args)
+        return AST("actuals", args)
 
     def constant(self, args):
         # print('constant', args)
