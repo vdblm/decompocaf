@@ -58,7 +58,6 @@ move $s2, $s0
 sub $s0, $s1 $s2
 
 move $s2, $s0 
-move $s1, $s0 
 mul $s0, $s1, $s2
 
 move $s2, $s0 

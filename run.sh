@@ -2,7 +2,7 @@
 mkdir -p out
 mkdir -p report
 cd ./tests
-prefix="t" ;
+prefix="" ;
 dirlist=(`ls ${prefix}*.d`) ;
 OUTPUT_DIRECTORY="out/"
 TEST_DIRECTORY="tests/"

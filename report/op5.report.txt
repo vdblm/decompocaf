@@ -1,0 +1,3 @@
+difference in line #1: file: out/op5.out -----> content: 1 <> file: tests/op5.out -----> content: true 
+difference in line #2: file: out/op5.out -----> content: 0 <> file: tests/op5.out -----> content: false 
+difference in line #3: file: out/op5.out -----> content: 0 <> file: tests/op5.out -----> content: false 

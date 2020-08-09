@@ -1,0 +1,1 @@
+different line count in these files! : file out/6_2.out : #7 , file tests/6_2.out : #12 

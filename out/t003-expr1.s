@@ -19,7 +19,6 @@ move $s1, $s0
 li $s0, 5
 
 move $s2, $s0 
-move $s1, $s0 
 mul $s0, $s1, $s2
 
 move $s2, $s0 
@@ -35,7 +34,6 @@ lw $t0, d_1
 move $s0, $t0
 
 move $s2, $s0 
-move $s1, $s0 
 mul $s0, $s1, $s2
 move $t0, $s0
 sw $t0, a_1
@@ -75,7 +73,6 @@ move $s2, $s0
 add $s0, $s1 $s2
 
 move $s2, $s0 
-move $s1, $s0 
 mul $s0, $s1, $s2
 move $t0, $s0
 sw $t0, z_1
@@ -107,7 +104,6 @@ move $s2, $s0
 add $s0, $s1 $s2
 
 move $s2, $s0 
-move $s1, $s0 
 mul $s0, $s1, $s2
 move $t0, $s0
 sw $t0, c_1

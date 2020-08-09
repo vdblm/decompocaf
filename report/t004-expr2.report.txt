@@ -1,1 +1,1 @@
-difference in line #1: file: out/t004-expr2.out -----> content: 756 <> file: tests/t004-expr2.out -----> content: -601 
+difference in line #1: file: out/t004-expr2.out -----> content: 924 <> file: tests/t004-expr2.out -----> content: -601 

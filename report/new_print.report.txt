@@ -1,0 +1,3 @@
+difference in line #1: file: out/new_print.out -----> content: -4.09600019 <> file: tests/new_print.out -----> content: 3.14150000 
+difference in line #2: file: out/new_print.out -----> content: 1725132046336.00000000 <> file: tests/new_print.out -----> content: 3.14159274 
+difference in line #3: file: out/new_print.out -----> content: -1447023155324820583349970010112.00000000 <> file: tests/new_print.out -----> content: 575450624.00000000 

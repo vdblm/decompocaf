@@ -1,1 +1,0 @@
-different line count in these files! : file out/t000-easy1.out : #0 , file tests/t000-easy1.out : #1 

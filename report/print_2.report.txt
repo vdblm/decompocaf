@@ -1,0 +1,1 @@
+difference in line #1: file: out/print_2.out -----> content: 210 <> file: tests/print_2.out -----> content: 2SmsStrue0 
