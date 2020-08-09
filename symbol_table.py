@@ -127,10 +127,12 @@ class SymTable:
             assert self.var_types.get(label2) is None
             return label1, label2
         if command == "if":
-            label = "IIF_" + str(self.if_num)
+            label1 = "IIF_1" + str(self.if_num)
+            label2 = "IIF_2" + str(self.if_num)
             self.if_num += 1
-            assert self.var_types.get(label) is None
-            return label
+            assert self.var_types.get(label1) is None
+            assert self.var_types.get(label2) is None
+            return label1, label2
 
 
 class Scope:

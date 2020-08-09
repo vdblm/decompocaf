@@ -1,12 +1,12 @@
-int a;
 int main() {
+    int a;
     int b;
     int i;
 
-    a = 2;
-    Print(a <= 2);
-    if (a <= 2) {
-        Print(1, 2, 3);
-        Print(4, 5, 6);
+    b = 0;
+    for(i = 1; i < 5; i = i + 1) {
+        Print(i);
     }
+
+    Print(b);
 }

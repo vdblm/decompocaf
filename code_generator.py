@@ -214,7 +214,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "slt %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "slt %s, %s %s\n" % (OP1, TMP, OP2)
             return body
         if child1.type == "double":
             linenum += 1
@@ -332,6 +332,8 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (TMP, OP1)
             body += "or %s, %s %s\n" % (OP1, OP2, TMP)
             return body
+    if ast.name == "par_expr":
+        return code_gen(ast.children[0])
 
     if ast.name == "while_stmt":
         while_start, while_end = sym_table.get_label('while')
@@ -360,14 +362,16 @@ def code_gen(ast: AST, prevLoopEnd=None):
         return 'j %s' % (prevLoopEnd)
 
     if ast.name == "if_stmt":
-        not_if = sym_table.get_label('if')
+        not_if1, not_if2 = sym_table.get_label('if')
         body = code_gen(ast.children[0], prevLoopEnd) + '\n'
-        body += 'beq %s, $0, %s\n' % (OP1, not_if)
+        body += 'beq %s, $0, %s\n' % (OP1, not_if1)
         body += 'sll $0, $0, 0\n'
         body += code_gen(ast.children[1], prevLoopEnd) + '\n'
-        body += '%s: sll $0, $0, 0\n' % (not_if)
+        body += "j %s\n" % (not_if2)
+        body += '%s: sll $0, $0, 0\n' % (not_if1)
         if len(ast.children) == 3:
             body += code_gen(ast.children[2], prevLoopEnd) + '\n'
+        body += '%s: sll $0, $0, 0\n' % (not_if2)
         return body
 
 
@@ -377,8 +381,7 @@ def final_code(code):
     global sym_table
     sym_table = SymTable(ast)
     sym_table.symbolize()
-    print(sym_table.data_code)
-    return sym_table.data_code + "\n" + NEW_LINE + ": .asciiz \"\n\" \n" + ".text\n" + code_gen(ast)
+    return sym_table.data_code + "\n" + NEW_LINE + ": .asciiz \"\\n\" \n" + ".text\n" + code_gen(ast)
 
 
 easy_code = """
@@ -386,8 +389,9 @@ int a;
 int main() {
     int b;
     int i;
-    
+
     a = 2;
+    Print((a <= 2));
     if (a <= 2) {
         Print(1, 2, 3);
         Print(4, 5, 6);

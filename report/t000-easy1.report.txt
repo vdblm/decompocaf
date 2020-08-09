@@ -1,1 +1,1 @@
-difference in line #1: file: out/t000-easy1.out -----> content: 0 <> file: tests/t000-easy1.out -----> content: 2 
+difference in line #1: file: out/t000-easy1.out -----> content: 0 <> file: tests/t000-easy1.out -----> content: 1 
