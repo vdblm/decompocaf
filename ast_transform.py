@@ -43,14 +43,17 @@ class CreateAST(Transformer):
 
     def type(self, args):
         if len(args) == 1:
-            return str(args[0])
+            return AST("type", [args[0]])
         else:
             # todo arrays
             raise Exception("No array type")
 
     def function_decl(self, args):
         # print("function_decl", args)
-        return AST("function_decl", [str(args[0]), args[1], args[3], args[5]])
+        return AST("function_decl", [args[0], args[1], args[3], args[5]])
+
+    def void_type(self, args):
+        return AST("void_type", [])
 
     def formals(self, args):
         # print('formals', args)
@@ -117,134 +120,66 @@ class CreateAST(Transformer):
 
     def expr(self, args):
         if len(args) == 1:
-            # | constant | lvalue | "this" | call | "(" expr ")"
-            # | "!" expr | "ReadInteger" "(" ")" | "ReadLine" "(" ")"
-            # | "new" IDENT | "NewArray" "(" expr "," type ")"
-            return args[0]
+            # | constant | lvalue | "this" | call
+            if str(args[0]) == "this":
+                return AST("this", [])
+            else:
+                return args[0]
+        if len(args) == 2:
+            # "-" expr | "!" expr
+            if str(args[0]) == "-":
+                return AST("minus_expr", [args[1]])
+            if str(args[0]) == "!":
+                return AST("not_expr", [args[1]])
 
-        if args[1] == '=':
-            return AST("assign_exp", [args[0], args[2]])
-            # return 'mov ' + args[0] + ', ' + args[1]
-        if len(args == 3):
-            if args[1] == '+':
+        if len(args) == 3:
+            #      "(" expr ")" | lvalue "=" expr
+            #      | expr "+" expr | expr "-" expr | expr "*" expr | expr "/" expr
+            #      | expr "%" expr |  | expr "<" expr | expr "<=" expr | expr ">" expr
+            #      | expr ">=" expr | expr "!=" expr | expr "==" expr | expr "&&" expr
+            #      | expr "||" expr
+            if str(args[0]) == "(":
+                return AST("par_expr", [args[1]])
+            op = str(args[1])
+            if op == '=':
+                return AST("assign_exp", [args[0], args[2]])
+            if op == '+':
                 return AST("add_expr", [args[0], args[2]])
-            if args[1] == '-':
+            if op == '-':
                 return AST("sub_expr", [args[0], args[2]])
-            if args[1] == '*':
+            if op == '*':
                 return AST("mult_expr", [args[0], args[2]])
-            if args[1] == '/':
+            if op == '/':
                 return AST("div_expr", [args[0], args[2]])
-            if args[1] == '%':
+            if op == '%':
                 return AST("mod_expr", [args[0], args[2]])
-            if args[1] == '<':
+            if op == '<':
                 return AST("lt_expr", [args[0], args[2]])
-            if args[1] == '>':
+            if op == '>':
                 return AST("gt_expr", [args[0], args[2]])
-            if args[1] == '<=':
+            if op == '<=':
                 return AST("le_expr", [args[0], args[2]])
-            if args[1] == '>=':
+            if op == '>=':
                 return AST("ge_expr", [args[0], args[2]])
-            if args[1] == '==':
+            if op == '==':
                 return AST("eq_expr", [args[0], args[2]])
-            if args[1] == '!=':
+            if op == '!=':
                 return AST("ne_expr", [args[0], args[2]])
-            if args[1] == '&&':
+            if op == '&&':
                 return AST("and_expr", [args[0], args[2]])
-            if args[1] == '||':
+            if op == '||':
                 return AST("or_expr", [args[0], args[2]])
 
-        return args[0]
+        # "ReadInteger" "(" ")" | "ReadLine" "(" ")"
+        #      | "new" IDENT | "NewArray" "(" expr "," type ")"
+        if str(args[0]) == "ReadInteger":
+            return AST("read_integer", [])
+        elif str(args[0]) == "ReadLine":
+            return AST("read_line", [])
+        elif str(args[0]) == "new" or str(args[0]) == "NewArray":
+            raise Exception("No array or class")
 
-    # def add_expr(self, args):
-    #     # print('add_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'add ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def sub_expr(self, args):
-    #     # print('sub_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'sub ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def mult_expr(self, args):
-    #     # print('mult_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'mult ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def div_expr(self, args):
-    #     # print('div_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'div ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def mod_expr(self, args):
-    #     # print('mod_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'mod ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def lt_expr(self, args):
-    #     # print('lt_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'lt ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def le_expr(self, args):
-    #     # print('le_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'le ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def gt_expr(self, args):
-    #     # print('gt_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'gt ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def ge_expr(self, args):
-    #     # print('ge_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'ge ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def ne_expr(self, args):
-    #     # print('ne_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'ne ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def eq_expr(self, args):
-    #     # print('eq_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'eq ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def and_expr(self, args):
-    #     # print('and_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'and ax, ' + args[1] + '\n'
-    #
-    #     return retVal
-    #
-    # def ge_expr(self, args):
-    #     # print('ge_expr', args)
-    #     retVal = 'mov ax, ' + args[0] + '\n'
-    #     retVal += 'ge ax, ' + args[1] + '\n'
-    #
-    #     return retVal
+        raise Exception("Expr error")
 
     def lvalue(self, args):
         # print('lvalue', args)
@@ -254,7 +189,7 @@ class CreateAST(Transformer):
 
         else:
             # TODO fix this
-            raise Exception
+            raise Exception("No array or class")
 
     def call(self, args):
         # print('call', args)
@@ -274,16 +209,16 @@ class CreateAST(Transformer):
         return AST("constant", [args[0]])
 
     # def IDENT(self, args):
-    #     return str(args[0])
+    #     return AST("ident", [str(args[0])])
 
-    # def INT_CONST(self, args):
-    #     return str(args[0])
+    def int_cons(self, args):
+        return AST("int_const", [args[0]])
 
-    # def DOUBLE_CONST(self, args):
-    #     return str(args[0])
+    def double_cons(self, args):
+        return AST("double_const", [args[0]])
 
-    # def BOOL_CONST(self, args):
-    #     return str(args[0])
+    def bool_cons(self, args):
+        return AST("bool_const", [args[0]])
 
-    # def STR_CONST(self, args):
-    #     return str(args[0])
+    def str_cons(self, args):
+        return AST("str_const", [args[0]])

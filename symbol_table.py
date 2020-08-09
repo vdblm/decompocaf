@@ -28,7 +28,7 @@ class SymTable:
         elif ast.name == "function_decl":
             # todo handle formals and function scope
             # stmt_block
-            self.__symbolize(ast.children[5])
+            self.__symbolize(ast.children[3])
 
         elif ast.name == "stmt_block":
             self.last_num += 1

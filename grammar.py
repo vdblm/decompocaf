@@ -12,8 +12,10 @@ variable : type IDENT
 !type : "int" | "double" | "bool" | "string" | IDENT | type "[]"
 
 !function_decl : type IDENT "(" formals ")" stmt_block
-              | "void" IDENT "(" formals ")" stmt_block
+              | void_type IDENT "(" formals ")" stmt_block
               
+void_type : "void"
+
 formals : variable ("," variable)*
         |
         
@@ -56,8 +58,17 @@ print_stmt : "Print" "(" expr ("," expr)* ")" ";"
 
 actuals : expr ("," expr)*
         |
-!constant : INT_CONST | DOUBLE_CONST | BOOL_CONST | STR_CONST | "null"
+!constant : int_cons | double_cons | bool_cons | str_cons | null
 
+int_cons : INT_CONST
+
+double_cons : DOUBLE_CONST
+
+bool_cons : BOOL_CONST
+
+str_cons : STR_CONST
+
+null : "null"
 IDENT : /([a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_){0,30}/
 INT_CONST : /(((0[xX])([0-9]|[a-f]|[A-F])+)|[0-9]+)/
 DOUBLE_CONST : /(([0-9]+\.([0-9]*)[eE][-+]?([0-9]+))|([0-9]+\.([0-9]*)))/

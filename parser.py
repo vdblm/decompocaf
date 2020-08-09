@@ -11,8 +11,6 @@ TMP = "cx"
 
 
 def code_gen(ast: AST, prevLoopEnd=None):
-    if not isinstance(ast, AST):
-        return
     if ast.name == "program":
         return "\n".join([code_gen(child, prevLoopEnd) for child in ast.children])
 
