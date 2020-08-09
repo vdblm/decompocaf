@@ -87,7 +87,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             pass
         else:
             raise Exception("not defined type")
-        print('*************************\n%s\n***************************'%body)
+        # print('*************************\n%s\n***************************'%body)
 
         return body
 
@@ -365,9 +365,11 @@ def code_gen(ast: AST, prevLoopEnd=None):
         body += code_gen(ast.children[1], for_end) + '\n'
         body += 'beq %s, $0, %s\n' % (OP1, for_end)
         body += 'sll $0, $0, 0\n'
+        body += code_gen(ast.children[3], for_end) + '\n'
         body += (code_gen(ast.children[2], for_end) if (ast.children[2] is not None) else '') + '\n'
         body += 'j %s\n' % (for_start)
         body += '%s: sll $0, $0, 0\n' % (for_end)
+        
         return body
 
     if ast.name == "break":

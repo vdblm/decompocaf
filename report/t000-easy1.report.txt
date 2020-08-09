@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-different line count in these files! : file out/t000-easy1.out : #1 , file tests/t000-easy1.out : #4 
-=======
-different line count in these files! : file out/t000-easy1.out : #0 , file tests/t000-easy1.out : #1 
->>>>>>> f9a5243c06a19211c27590e0fef23d8198c62fd4
+OK 
