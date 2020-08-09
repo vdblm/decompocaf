@@ -159,7 +159,6 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "move %s, %s \n" % (OP2, OP1)
             body += "mul %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
@@ -183,7 +182,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "mul.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
+            body += "div.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mod_expr":
@@ -222,14 +221,18 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
+<<<<<<< Updated upstream
             body += "slt %s, %s %s\n" % (OP1, TMP, OP2)
+=======
+            body += "sgt %s, %s %s\n" % (OP1, OP2, TMP)
+>>>>>>> Stashed changes
             return body
         if child1.type == "double":
             linenum += 1
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.lt.d %s, %s\n" % (FOP2, FOP1)
+            body += "c.gt.d %s, %s\n" % (FOP2, FOP1)
             body += "bc1t code" + str(linenum) + "\n"
             body += "addu %s ,$0,$0\n" % OP1
             body += "b    end" + linenum + "\n"
@@ -271,7 +274,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
-            body += "c.le.d %s, %s\n" % (FOP2, FOP1)
+            body += "c.ge.d %s, %s\n" % (FOP2, FOP1)
             linenum += 1
             body += "bc1t code" + str(linenum) + "\n"
             body += "addu %s ,$0,$0\n" % OP1
