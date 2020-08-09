@@ -8,9 +8,6 @@ OP2 = "bx"
 
 TMP = "cx"
 
-sym_table = SymTable()
-# TODO walk over AST to update sym_table (vahid)
-
 
 def code_gen(ast: AST):
     if ast.name == "program":
@@ -54,7 +51,14 @@ easy_code = """
 int main(){
     int a;
     a = 2;
+    {
+    int a;
+    a = 3;
+    }
 }
 """
 
-print((parser.parse(easy_code)))
+ast = parser.parse(easy_code)
+sym_table = SymTable(ast)
+sym_table.symbolize()
+print(ast)
