@@ -1,5 +1,7 @@
 from ast_transform import AST
 
+MAX_STR = 200
+
 
 class SymTable:
     def __init__(self, ast):
@@ -99,11 +101,11 @@ class SymTable:
         if var_type == "int":
             code += ".word 0\n"
         elif var_type == "double":
-            code += ".float 0\n"
+            code += ".float 0.0\n"
         elif var_type == "bool":
             code += ".byte 0\n"
         elif var_type == "string":
-            code += ".asciiz \"\""
+            code += ".space " + str(MAX_STR) + " # allocate 200 byte for a string"
         else:
             raise Exception("Not defined type")
         self.data_code += code
