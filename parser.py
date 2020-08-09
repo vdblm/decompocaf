@@ -4,14 +4,22 @@ from ast_transform import AST, CreateAST
 from grammar import grammar
 from symbol_table import SymTable
 
-OP1 = "ax"
-OP2 = "bx"
+OP1 = "$ax"
+OP2 = "$bx"
 
-TMP = "cx"
+TMP = "$cx"
 
-FOP1 = "f0"
-FOP2 = "f1"
-FOP3 = "f3"
+FOP1 = "$f0"
+FOP2 = "$f1"
+FOP3 = "$f3"
+
+SW = "$rt"
+LW = "$rt"
+SYS_CODE = "$v0"
+SYS_ARG = "$a0"
+PRINT_INT = 1
+PRINT_DOUBLE = 2
+PRINT_STRING = 4
 
 
 def code_gen(ast: AST, prevLoopEnd=None):
@@ -33,24 +41,55 @@ def code_gen(ast: AST, prevLoopEnd=None):
     if ast.name == "stmt_block":
         # iterate till variable declaration is finished
         res = filter(lambda x: x.name != "variable_decl", ast.children)
+        # print(list(res)[0])
         return "\n".join([code_gen(a, prevLoopEnd) for a in list(res)])
 
-    if ast.name == "assign_exp":
+    if ast.name == "assign_expr":
         lvalue = ast.children[0]
         exp = ast.children[1]
-        body = ""
-        if exp.name == "constant":
-            # $rt register for address
-            const = exp.children[0]
-            # it depends on lvalue type!
-            body += "li $rt, " + const + " # load constant to $ra\n"
-            # TODO should find the lvalue label in the symbol table
-            label = lvalue.children[0]
-            body += "sw $rt, " + label + " # store word in $rt to address " + label + "\n"
+        body = code_gen(exp)
+        if lvalue.type == "int":
+            body += "move {}, {}\n".format(SW, OP1)
+            body += "sw {}, {}\n".format(SW, lvalue.children[0])
+        elif lvalue.type == "double":
+            # todo
+            pass
+        elif lvalue.type == "string":
+            # todo
+            pass
+        elif lvalue.type == "bool":
+            # todo
+            pass
+        else:
+            raise Exception("not defined type")
+
         return body
 
     if ast.name == "print_stmt":
-        pass
+        for child in ast.children:
+            if child.type == "int":
+                body = ""
+                if child.name == "lvalue":
+                    body += "lw {}, {}\n".format(LW, child.children[0])
+                    body += "move {}, {}\n".format(SYS_ARG, LW)
+                else:
+                    body += code_gen(child)
+                    body += "move {}, {}\n".format(SYS_ARG, OP1)
+                body += "li {}, {}\n".format(SYS_CODE, PRINT_INT)
+                body += "syscall    # print!"
+                return body
+            else:
+                # todo
+                pass
+
+    if ast.name == "constant":
+        # todo
+        if ast.type == "int":
+            return "li {}, {}\n".format(OP1, ast.children[0].children[0])
+        else:
+            # todo handle double, string, ...
+            pass
+
     if ast.name == "add_expr":
         if child1.type == "int":
             body = code_gen(ast.children[0]) + '\n'
@@ -59,7 +98,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += "add %s, %s %s\n" % (OP1, OP2, TMP)
             return body
-        elif child1.type=="double":
+        elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP2)
@@ -257,17 +296,23 @@ def code_gen(ast: AST, prevLoopEnd=None):
         return body
 
 
+def final_code(ast):
+    global sym_table
+    sym_table = SymTable(ast)
+    sym_table.symbolize()
+    return sym_table.data_code + "\n.text\n" + code_gen(ast)
+
+
 parser = Lark(grammar, parser='lalr', transformer=CreateAST())
 
 easy_code = """
 int main(){
     int a;
     a = 2;
+    Print(a);
 
 }
 """
 
 ast = parser.parse(easy_code)
-sym_table = SymTable(ast)
-sym_table.symbolize()
-print(code_gen(ast))
+print(final_code(ast))

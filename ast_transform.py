@@ -90,7 +90,7 @@ class CreateAST(Transformer):
 
     def stmt(self, args):
         # print('stmt', args)
-        return AST('stmt', args)
+        return args[0]
 
     def if_stmt(self, args):
         children = [args[2], args[4]]
