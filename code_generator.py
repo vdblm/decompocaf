@@ -114,16 +114,13 @@ def code_gen(ast: AST, prevLoopEnd=None):
         # todo
         if ast.type == "int":
             return "li {}, {}\n".format(OP1, ast.children[0].children[0])
-<<<<<<< Updated upstream
         elif ast.type == "bool":
             num = 1 if ast.children[0].children[0] == "true" else 0
             return "li {}, {}\n".format(OP1, num)
-=======
         elif ast.type == "double":
             return "li.d {}, {}\n".format(FOP1, ast.children[0].children[0])
 
             pass
->>>>>>> Stashed changes
 
     if ast.name == "add_expr":
         if child1.type == "int":
@@ -359,12 +356,12 @@ def code_gen(ast: AST, prevLoopEnd=None):
 
     if ast.name == "for_stmt":
         for_start, for_end = sym_table.get_label('for')
-        body = code_gen(ast.children[0], for_end) + '\n'
+        body = (code_gen(ast.children[0], for_end) if (ast.children[0] is not None) else '') + '\n'
         body = '%s:\n' % (for_start)
         body += code_gen(ast.children[1], for_end) + '\n'
         body += 'beq %s, $0, %s\n' % (OP1, for_end)
         body += 'sll $0, $0, 0\n'
-        body += code_gen(ast.children[2], for_end) + '\n'
+        body += (code_gen(ast.children[2], for_end) if (ast.children[2] is not None) else '') + '\n'
         body += 'j %s\n' % (for_start)
         body += '%s: sll $0, $0, 0\n' % (for_end)
         return body
