@@ -10,6 +10,8 @@ TMP = "cx"
 
 
 def code_gen(ast: AST, prevLoopEnd=None):
+    if not isinstance(ast, AST):
+        return
     if ast.name == "program":
         return "\n".join([code_gen(child, prevLoopEnd) for child in ast.children])
 
@@ -46,50 +48,58 @@ def code_gen(ast: AST, prevLoopEnd=None):
 
     if ast.name == "while_stmt":
         while_start, while_end = sym_table.get_label('while')
-        body = '%s:\n'%(while_start)
+        body = '%s:\n' % (while_start)
         body += code_gen(ast.children[0], while_end) + '\n'
-        body += 'beq %s, $0, %s\n'%(OP1, while_end)
+        body += 'beq %s, $0, %s\n' % (OP1, while_end)
         body += 'sll $0, $0, 0\n'
         body += code_gen(ast.children[1], while_end) + '\n'
-        body += 'j %s\n'%(while_start)
-        body += '%s: sll $0, $0, 0\n'%(while_end)
+        body += 'j %s\n' % (while_start)
+        body += '%s: sll $0, $0, 0\n' % (while_end)
         return body
-    
+
     if ast.name == "for_stmt":
         for_start, for_end = sym_table.get_label('for')
         body = code_gen(ast.children[0], for_end) + '\n'
-        body = '%s:\n'%(for_start)
+        body = '%s:\n' % (for_start)
         body += code_gen(ast.children[1], for_end) + '\n'
-        body += 'beq %s, $0, %s\n'%(OP1, for_end)
+        body += 'beq %s, $0, %s\n' % (OP1, for_end)
         body += 'sll $0, $0, 0\n'
         body += code_gen(ast.children[2], for_end) + '\n'
-        body += 'j %s\n'%(for_start)
-        body += '%s: sll $0, $0, 0\n'%(for_end)
+        body += 'j %s\n' % (for_start)
+        body += '%s: sll $0, $0, 0\n' % (for_end)
         return body
-    
+
     if ast.name == "break":
-        return 'j %s'%(prevLoopEnd)
-    
+        return 'j %s' % (prevLoopEnd)
+
     if ast.name == "if_stmt":
         not_if = sym_table.get_label('if')
         body += code_gen(ast.children[0], prevLoopEnd) + '\n'
-        body += 'beq %s, $0, %s\n'%(OP1, not_if)
+        body += 'beq %s, $0, %s\n' % (OP1, not_if)
         body += 'sll $0, $0, 0\n'
         body += code_gen(ast.children[1], prevLoopEnd) + '\n'
-        body += '%s: sll $0, $0, 0\n'%(not_if)
+        body += '%s: sll $0, $0, 0\n' % (not_if)
         if len(ast.children) == 3:
             body += code_gen(ast.children[2], prevLoopEnd) + '\n'
         return body
 
+
 parser = Lark(grammar, parser='lalr', transformer=CreateAST())
 
 easy_code = """
+int x;
 int main(){
     int a;
     a = 2;
     {
     int a;
+    int b;
     a = 3;
+    }
+    x = 4;
+    {
+    int x;
+    x = 5;
     }
 }
 """
@@ -97,4 +107,4 @@ int main(){
 ast = parser.parse(easy_code)
 sym_table = SymTable(ast)
 sym_table.symbolize()
-print(ast)
+print(sym_table.data_code)

@@ -94,4 +94,4 @@ class Scope:
 
     def get_var(self, var_name):
         var = var_name + "_" + str(self.num)
-        return var, self.vars[var]
+        return var, self.vars.get(var)
