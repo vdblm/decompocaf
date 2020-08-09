@@ -187,7 +187,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "div.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
+            body += "div.d %s, %s, %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mod_expr":
