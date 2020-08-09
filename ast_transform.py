@@ -7,12 +7,13 @@ class AST:
 
         # list of AST nodes
         self.children = children
+        self.type = None
 
     def __str__(self):
         return self.__print()
 
     def __print(self, indent=0):
-        ret = "*" * indent + "name: " + self.name + "\n"
+        ret = "*" * indent + self.name + ", type: " + str(self.type) + "\n"
         for child in self.children:
             if isinstance(child, AST):
                 ret += child.__print(indent + 1) + "\n"
@@ -142,7 +143,7 @@ class CreateAST(Transformer):
                 return AST("par_expr", [args[1]])
             op = str(args[1])
             if op == '=':
-                return AST("assign_exp", [args[0], args[2]])
+                return AST("assign_expr", [args[0], args[2]])
             if op == '+':
                 return AST("add_expr", [args[0], args[2]])
             if op == '-':
@@ -211,14 +212,27 @@ class CreateAST(Transformer):
     # def IDENT(self, args):
     #     return AST("ident", [str(args[0])])
 
+    def null(self, args):
+        ast = AST("null", [])
+        ast.type = "null"
+        return ast
+
     def int_cons(self, args):
-        return AST("int_const", [args[0]])
+        ast = AST("int_const", [args[0]])
+        ast.type = "int"
+        return ast
 
     def double_cons(self, args):
-        return AST("double_const", [args[0]])
+        ast = AST("double_const", [args[0]])
+        ast.type = "double"
+        return ast
 
     def bool_cons(self, args):
-        return AST("bool_const", [args[0]])
+        ast = AST("bool_const", [args[0]])
+        ast.type = "bool"
+        return ast
 
     def str_cons(self, args):
-        return AST("str_const", [args[0]])
+        ast = AST("str_const", [args[0]])
+        ast.type = "string"
+        return ast

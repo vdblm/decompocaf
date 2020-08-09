@@ -5,7 +5,7 @@ class SymTable:
     def __init__(self, ast):
         self.ast = ast
         self.scope_stack = [Scope(0)]
-        self.var_type = dict()
+        self.var_types = dict()
         self.last_num = 0
         self.data_code = ".data # Data section\n"
 
@@ -20,6 +20,7 @@ class SymTable:
                 if isinstance(child, AST) and child.name == "variable_decl":
                     self.last_num += 1
                     scope = Scope(self.last_num)
+                    self.__symbolize(child)
                     self.__handle_var_dec(child.children[0], scope)
                     self.scope_stack.append(scope)
                 elif isinstance(child, AST):
@@ -37,6 +38,7 @@ class SymTable:
             for child in ast.children:
                 if isinstance(child, AST) and child.name == "variable_decl":
                     self.__handle_var_dec(child.children[0], scope)
+                    self.__symbolize(child)
                 elif isinstance(child, AST):
                     self.__symbolize(child)
 
@@ -46,7 +48,29 @@ class SymTable:
             real_name = self.__search_var(ast.children[0])
             assert real_name is not None
             ast.children[0] = real_name
+            var_type = self.var_types[real_name]
+            ast.type = var_type
 
+        elif "expr" in ast.name:
+            if ast.name == "minus_expr" or ast.name == "not_expr" or ast.name == "par_expr":
+                self.__symbolize(ast.children[0])
+                ast.type = ast.children[0].type
+
+            elif ast.name in ["add_expr", "sub_expr", "mult_expr", "div_expr", "mod_expr"]:
+                self.__symbolize(ast.children[0])
+                self.__symbolize(ast.children[1])
+                typ1 = ast.children[0].type
+                typ2 = ast.children[1].type
+                assert typ1 == typ2
+                ast.type = typ1
+            else:
+                self.__symbolize(ast.children[0])
+                self.__symbolize(ast.children[1])
+                ast.type = "bool"
+        elif ast.name == "constant":
+            ast.type = ast.children[0].type
+        elif ast.name == "variable":
+            ast.type = ast.children[0].children[0]
         else:
             for child in ast.children:
                 if isinstance(child, AST):
@@ -63,18 +87,27 @@ class SymTable:
         # TODO bad bad bad kheili bad fixit
         var_type = var_dec_ast.children[0].children[0]
         var_name = var_dec_ast.children[1] + "_" + str(scope.num)
-        self.var_type[var_name] = var_type
+        var_dec_ast.children[1] = var_name
+        self.var_types[var_name] = var_type
         scope.add_var(var_name, var_type)
         code = var_name + ": "
 
         # TODO handle all types
         if var_type == "int":
             code += ".word 0\n"
+        elif var_type == "double":
+            code += ".float 0\n"
+        elif var_type == "bool":
+            code += ".byte 0\n"
+        elif var_type == "string":
+            code += ".asciiz \"\""
+        else:
+            raise Exception("Not defined type")
         self.data_code += code
 
     def fetch(self, var_name):
         # returns address, type (int, double, string, ...)
-        return var_name, self.var_type[var_name]
+        return var_name, self.var_types[var_name]
 
     def get_label(self, command):
         # command \in {"while", "if", "for", ...}

@@ -189,24 +189,14 @@ def code_gen(ast: AST, prevLoopEnd=None):
 parser = Lark(grammar, parser='lalr', transformer=CreateAST())
 
 easy_code = """
-int x;
 int main(){
     int a;
     a = 2;
-    {
-    int a;
-    int b;
-    a = 3;
-    }
-    x = 4;
-    {
-    int x;
-    x = 5;
-    }
+
 }
 """
 
 ast = parser.parse(easy_code)
 sym_table = SymTable(ast)
 sym_table.symbolize()
-print(sym_table.data_code)
+print(sym_table.ast)
