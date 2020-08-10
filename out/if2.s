@@ -9,7 +9,7 @@ move $s1, $s0
 li $s0, 1
 
 move $s2, $s0 
-seq $s0, $s1 $s2
+seq $s0, $s1, $s2
 
 beq $s0, $0, IIF_10
 sll $0, $0, 0
@@ -29,7 +29,7 @@ move $s1, $s0
 li $s0, 1
 
 move $s2, $s0 
-seq $s0, $s1 $s2
+seq $s0, $s1, $s2
 
 beq $s0, $0, IIF_11
 sll $0, $0, 0
@@ -61,7 +61,7 @@ move $s1, $s0
 li $s0, 2
 
 move $s2, $s0 
-seq $s0, $s1 $s2
+seq $s0, $s1, $s2
 
 beq $s0, $0, IIF_12
 sll $0, $0, 0
@@ -81,7 +81,7 @@ move $s1, $s0
 li $s0, 2
 
 move $s2, $s0 
-seq $s0, $s1 $s2
+seq $s0, $s1, $s2
 
 beq $s0, $0, IIF_13
 sll $0, $0, 0
@@ -113,7 +113,7 @@ move $s1, $s0
 li $s0, 2
 
 move $s2, $s0 
-seq $s0, $s1 $s2
+seq $s0, $s1, $s2
 
 beq $s0, $0, IIF_14
 sll $0, $0, 0
@@ -133,7 +133,7 @@ move $s1, $s0
 li $s0, 1
 
 move $s2, $s0 
-seq $s0, $s1 $s2
+seq $s0, $s1, $s2
 
 beq $s0, $0, IIF_15
 sll $0, $0, 0

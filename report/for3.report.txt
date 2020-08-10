@@ -1,1 +1,1 @@
-different line count in these files! : file out/for3.out : #1 , file tests/for3.out : #5 
+different line count in these files! : file out/for3.out : #4 , file tests/for3.out : #5 

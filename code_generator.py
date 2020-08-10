@@ -87,6 +87,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             pass
         else:
             raise Exception("not defined type")
+        # print('*************************\n%s\n***************************'%body)
 
         return body
 
@@ -132,14 +133,14 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "add %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "add %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "add.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
+            body += "add.d %s, %s, %s\n" % (FOP1, FOP2, FOP3)
             return body
     if ast.name == "sub_expr":
         if child1.type == "int":
@@ -147,14 +148,14 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "sub %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "sub %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "sub.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
+            body += "sub.d %s, %s, %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mult_expr":
@@ -170,7 +171,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "mul.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
+            body += "mul.d %s, %s, %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "div_expr":
@@ -186,7 +187,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "mov.d %s, %s \n" % (FOP2, FOP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "mov.d %s, %s \n" % (FOP3, FOP1)
-            body += "div.d %s, %s %s\n" % (FOP1, FOP2, FOP3)
+            body += "div.d %s, %s, %s\n" % (FOP1, FOP2, FOP3)
             return body
 
     if ast.name == "mod_expr":
@@ -203,7 +204,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "slt %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "slt %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
             linenum += 1
@@ -225,7 +226,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "slt %s, %s %s\n" % (OP1, TMP, OP2)
+            body += "slt %s, %s, %s\n" % (OP1, TMP, OP2)
             return body
         if child1.type == "double":
             linenum += 1
@@ -247,7 +248,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "sle %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "sle %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
             linenum += 1
@@ -268,7 +269,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "sge %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "sge %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
@@ -289,7 +290,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "seq %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "seq %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         elif child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
@@ -311,7 +312,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "sne %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "sne %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
         if child1.type == "double":
             body = code_gen(ast.children[0]) + '\n'
@@ -333,7 +334,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "and %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "and %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
     if ast.name == "or_expr":
         if True:
@@ -341,7 +342,7 @@ def code_gen(ast: AST, prevLoopEnd=None):
             body += "move %s, %s \n" % (OP2, OP1)
             body += code_gen(ast.children[1]) + '\n'
             body += "move %s, %s \n" % (TMP, OP1)
-            body += "or %s, %s %s\n" % (OP1, OP2, TMP)
+            body += "or %s, %s, %s\n" % (OP1, OP2, TMP)
             return body
     if ast.name == "par_expr":
         return code_gen(ast.children[0])
@@ -360,13 +361,15 @@ def code_gen(ast: AST, prevLoopEnd=None):
     if ast.name == "for_stmt":
         for_start, for_end = sym_table.get_label('for')
         body = (code_gen(ast.children[0], for_end) if (ast.children[0] is not None) else '') + '\n'
-        body = '%s:\n' % (for_start)
+        body += '%s:\n' % (for_start)
         body += code_gen(ast.children[1], for_end) + '\n'
         body += 'beq %s, $0, %s\n' % (OP1, for_end)
         body += 'sll $0, $0, 0\n'
+        body += code_gen(ast.children[3], for_end) + '\n'
         body += (code_gen(ast.children[2], for_end) if (ast.children[2] is not None) else '') + '\n'
         body += 'j %s\n' % (for_start)
         body += '%s: sll $0, $0, 0\n' % (for_end)
+        
         return body
 
     if ast.name == "break":

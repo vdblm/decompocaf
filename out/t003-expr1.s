@@ -22,7 +22,7 @@ move $s2, $s0
 mul $s0, $s1, $s2
 
 move $s2, $s0 
-add $s0, $s1 $s2
+add $s0, $s1, $s2
 move $t0, $s0
 sw $t0, z_1
 
@@ -53,7 +53,7 @@ lw $t0, b_1
 move $s0, $t0
 
 move $s2, $s0 
-add $s0, $s1 $s2
+add $s0, $s1, $s2
 
 move $s1, $s0 
 lw $t0, c_1
@@ -64,13 +64,13 @@ lw $t0, d_1
 move $s0, $t0
 
 move $s2, $s0 
-add $s0, $s1 $s2
+add $s0, $s1, $s2
 
 div $s1, $s0 
 mflo $s0
 
 move $s2, $s0 
-add $s0, $s1 $s2
+add $s0, $s1, $s2
 
 move $s2, $s0 
 mul $s0, $s1, $s2
@@ -101,7 +101,7 @@ lw $t0, z_1
 move $s0, $t0
 
 move $s2, $s0 
-add $s0, $s1 $s2
+add $s0, $s1, $s2
 
 move $s2, $s0 
 mul $s0, $s1, $s2
@@ -128,16 +128,16 @@ lw $t0, z_1
 move $s0, $t0
 
 move $s2, $s0 
-sub $s0, $s1 $s2
+sub $s0, $s1, $s2
 
 move $s2, $s0 
-sub $s0, $s1 $s2
+sub $s0, $s1, $s2
 
 move $s2, $s0 
-sub $s0, $s1 $s2
+sub $s0, $s1, $s2
 
 move $s2, $s0 
-sub $s0, $s1 $s2
+sub $s0, $s1, $s2
 move $t0, $s0
 sw $t0, d_1
 

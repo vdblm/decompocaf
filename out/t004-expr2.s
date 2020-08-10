@@ -55,13 +55,13 @@ div $s1, $s0
 mflo $s0
 
 move $s2, $s0 
-sub $s0, $s1 $s2
+sub $s0, $s1, $s2
 
 move $s2, $s0 
 mul $s0, $s1, $s2
 
 move $s2, $s0 
-add $s0, $s1 $s2
+add $s0, $s1, $s2
 move $t0, $s0
 sw $t0, z_1
 

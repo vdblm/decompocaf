@@ -9,7 +9,7 @@ move $s1, $s0
 li $s0, 0
 
 move $s2, $s0 
-and $s0, $s1 $s2
+and $s0, $s1, $s2
 move $a0, $s0
 li $v0, 1
 syscall    # print!
@@ -23,7 +23,7 @@ move $s1, $s0
 li $s0, 0
 
 move $s2, $s0 
-or $s0, $s1 $s2
+or $s0, $s1, $s2
 move $a0, $s0
 li $v0, 1
 syscall    # print!
